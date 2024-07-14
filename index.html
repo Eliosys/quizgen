@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuizGen - Comprehensive Quiz Management</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; padding: 20px; }
+        .container { max-width: 1000px; margin: auto; }
+        .section { margin-bottom: 30px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .qa-item { margin-bottom: 20px; }
+        #qrCode { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>QuizGen</h1>
+        <p>Comprehensive Quiz Management</p>
+
+        <nav>
+            <ul>
+                <li><a href="#create">Create Quiz</a></li>
+                <li><a href="#results">View Results</a></li>
+                <li><a href="#qa">Questions & Answers</a></li>
+            </ul>
+        </nav>
+
+        <div id="create" class="section">
+            <h2>Create a New Quiz</h2>
+            <form id="quizForm">
+                <label for="pdfUpload">Upload PDF:</label>
+                <input type="file" id="pdfUpload" accept=".pdf"><br><br>
+                
+                <label for="pageRange">Page Range:</label>
+                <input type="text" id="pageRange" placeholder="e.g. 1-5"><br><br>
+                
+                <label for="numQuestions">Number of Questions:</label>
+                <input type="number" id="numQuestions" min="1"><br><br>
+                
+                <button type="submit">Generate Quiz</button>
+            </form>
+            <div id="qrCode"></div>
+        </div>
+
+        <div id="results" class="section">
+            <h2>Student Results Table</h2>
+            <table id="resultsTable">
+                <tr>
+                    <th>Student Name</th>
+                    <th>Score</th>
+                    <th>Time Taken</th>
+                    <th>Strengths</th>
+                    <th>Areas for Improvement</th>
+                </tr>
+                <tr>
+                    <td>John Doe</td>
+                    <td>85%</td>
+                    <td>15:32</td>
+                    <td>Physical Geography, Climate Zones</td>
+                    <td>Political Boundaries, Economic Geography</td>
+                </tr>
+                <tr>
+                    <td>Jane Smith</td>
+                    <td>92%</td>
+                    <td>14:45</td>
+                    <td>Political Boundaries, Economic Geography</td>
+                    <td>Climate Zones</td>
+                </tr>
+                <tr>
+                    <td>Bob Johnson</td>
+                    <td>78%</td>
+                    <td>17:20</td>
+                    <td>Physical Geography</td>
+                    <td>Political Boundaries, Economic Geography, Climate Zones</td>
+                </tr>
+            </table>
+            <button onclick="copyResultsTable()">Copy Results Table</button>
+        </div>
+
+        <div id="qa" class="section">
+            <h2>Questions and Answers</h2>
+            <div class="qa-section">
+                <div class="qa-item">
+                    <h4>Question 1:</h4>
+                    <p>What is the capital of France?</p>
+                    <h4>Answer:</h4>
+                    <p>Paris</p>
+                </div>
+                <div class="qa-item">
+                    <h4>Question 2:</h4>
+                    <p>Who wrote "To Kill a Mockingbird"?</p>
+                    <h4>Answer:</h4>
+                    <p>Harper Lee</p>
+                </div>
+                <div class="qa-item">
+                    <h4>Question 3:</h4>
+                    <p>What is the chemical symbol for gold?</p>
+                    <h4>Answer:</h4>
+                    <p>Au</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('quizForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            generateQRCode();
+        });
+
+        function generateQRCode() {
+            const qrCodeDiv = document.getElementById('qrCode');
+            qrCodeDiv.innerHTML = ''; // Clear previous QR code
+
+            const quizUrl = `https://quizgen.com/quiz?id=${Date.now()}`; // Generate a unique URL
+            
+            new QRCode(qrCodeDiv, {
+                text: quizUrl,
+                width: 128,
+                height: 128,
+                colorDark : "#000000",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.H
+            });
+
+            // Add a link below the QR code
+            const linkElement = document.createElement('p');
+            linkElement.innerHTML = `Direct link: <a href="${quizUrl}" target="_blank">${quizUrl}</a>`;
+            qrCodeDiv.appendChild(linkElement);
+        }
+
+        function copyResultsTable() {
+            const table = document.getElementById('resultsTable');
+            const range = document.createRange();
+            range.selectNode(table);
+            window.getSelection().removeAllRanges();
+            window.getSelection().addRange(range);
+            document.execCommand('copy');
+            window.getSelection().removeAllRanges();
+            alert('Results table copied to clipboard!');
+        }
+    </script>
+</body>
+</html>
